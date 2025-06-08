@@ -1,9 +1,11 @@
-import { UserType } from './types/user';
+import 'dotenv/config';
 import { findUserByEmail, findUserById, createUser } from './repository';
 import jwt from 'jsonwebtoken';
 
-const myAccessToken = "owls-can-make-secret-sauce";
-const myRefreshToken = "owls-stay-fresh-af";
+
+const myAccessSecret = process.env.ACCESS_TOKEN_SECRET as string;
+const myRefreshSecret = process.env.REFRESH_TOKEN_SECRET as string;
+
 
 const login = async ({email, password}: {email: string, password: string}) => {
     const user = await findUserByEmail(email);
@@ -30,8 +32,8 @@ const login = async ({email, password}: {email: string, password: string}) => {
         exp: refresh_expiration_time,
     };
 
-    const accessToken = jwt.sign(accessClaims, myAccessToken, { algorithm: 'HS256' });
-    const refreshToken = jwt.sign(refreshClaims, myRefreshToken, { algorithm: 'HS256' });
+    const accessToken = jwt.sign(accessClaims, myAccessSecret, { algorithm: 'HS256' });
+    const refreshToken = jwt.sign(refreshClaims, myRefreshSecret, { algorithm: 'HS256' });
 
     return [ user, accessToken, refreshToken ];
 }
@@ -41,9 +43,9 @@ const refresh = async (refreshToken: string) => {
     let accessToken: string = ''; // Initialize accessToken
 
     await new Promise((resolve, reject) => {
-        jwt.verify(refreshToken, myRefreshToken, async (err: Error | null, payload: any) => {
+        jwt.verify(refreshToken, myRefreshSecret, async (err: Error | null, payload: any) => {
             if (err) {
-                // console.log(refreshToken, myRefreshToken);
+                // console.log(refreshToken, myRefreshSecret);
                 return reject(new Error('Invalid refresh token'));
             }
 
@@ -57,7 +59,7 @@ const refresh = async (refreshToken: string) => {
                 // Generate new access token
                 const current_time = Math.floor(Date.now() / 1000);
                 const expiration_time = current_time + 900; // 15 minutes
-                const private_key = myAccessToken; // Use the access token as the private key
+                const private_key = myAccessSecret; // Use the access token as the private key
                 const claims = {
                     sub: user._id.toString(), // Use user ID in JWT claims
                     exp: expiration_time,
@@ -94,4 +96,16 @@ const register = async ({ email, username, password, role }: { email: string, us
     }
 }
 
-export { login, refresh, register };
+
+const validateToken = async (token: string) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, myAccessSecret, async (err: Error | null, payload: any) => {
+            if (err) {
+                return reject(new Error('Invalid or expired token'));
+            }
+            resolve(payload.sub);
+        });
+    });
+};
+
+export { login, refresh, register, validateToken };

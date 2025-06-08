@@ -8,9 +8,9 @@ const Login = async (req: Request, res: Response) => {
         const [user, accessToken, refreshToken] = result as [UserType, string, string];
 
         res.cookie('refresh_token', refreshToken, { httpOnly: true });
+        res.setHeader('Authorization', `Bearer ${accessToken}`);
         res.json({
             message: 'Authentication successful',
-            accessToken: accessToken,
             user: {
                 id: user._id, // Include user ID
                 name: user.username,
@@ -34,9 +34,9 @@ const Refresh = async (req: Request, res: Response) => {
         const result = await authService.refresh(refreshToken);
         const [user, accessToken] = result as [UserType, string];
 
+        res.setHeader('Authorization', `Bearer ${accessToken}`);
         res.json({
             message: 'Authentication successful',
-            accessToken: accessToken,
             user: {
                 id: user._id, // Include user ID
                 name: user.username,
