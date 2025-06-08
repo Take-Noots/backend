@@ -1,12 +1,12 @@
-import { User } from './model';
 import { UserType } from './types/user';
+import { findUserByEmail, findUserById, createUser } from './repository';
 import jwt from 'jsonwebtoken';
 
 const myAccessToken = "owls-can-make-secret-sauce";
 const myRefreshToken = "owls-stay-fresh-af";
 
 const login = async ({email, password}: {email: string, password: string}) => {
-    const user = await User.findOne({ email });
+    const user = await findUserByEmail(email);
     
     if (!user) {
         throw new Error('User not found');
@@ -48,7 +48,7 @@ const refresh = async (refreshToken: string) => {
             }
 
             try {
-                user = await User.findById(payload.sub); // Use `sub` from claims
+                user = await findUserById(payload.sub); // Use repository function
 
                 if (!user) {
                     return reject(new Error('User not found'));
@@ -81,25 +81,14 @@ const register = async ({ email, username, password, role }: { email: string, us
 
     try {
         // Check if the email already exists
-        const existingUser = await User.findOne({ email });
+        const existingUser = await findUserByEmail(email);
         if (existingUser) {
             throw new Error('Email already exists');
         }
 
-        // Create a new user
-        const newUser = new User({ username, email, role, password });
-        await newUser.save();
-
-        // Convert newUser to UserType
-        const user: UserType = {
-            _id: newUser._id.toString(),
-            email: newUser.email,
-            username: newUser.username,
-            password: newUser.password,
-            role: newUser.role,
-        };
-
-        return user; // Return as UserType
+        // Create a new user using repository
+        const user = await createUser({ email, username, password, role });
+        return user;
     } catch (err) {
         throw new Error('Registration failed: ' + (err instanceof Error ? err.message : String(err)));
     }
