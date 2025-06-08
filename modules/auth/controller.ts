@@ -12,6 +12,7 @@ const Login = async (req: Request, res: Response) => {
             message: 'Authentication successful',
             accessToken: accessToken,
             user: {
+                id: user._id, // Include user ID
                 name: user.username,
                 email: user.email,
                 role: user.role,
@@ -37,6 +38,7 @@ const Refresh = async (req: Request, res: Response) => {
             message: 'Authentication successful',
             accessToken: accessToken,
             user: {
+                id: user._id, // Include user ID
                 name: user.username,
                 email: user.email,
                 role: user.role,
@@ -54,6 +56,7 @@ const Register = async (req: Request, res: Response) => {
         res.status(201).json({
             message: 'User registered successfully',
             user: {
+                id: user._id, // Include user ID
                 name: user.username,
                 email: user.email,
                 role: user.role,

@@ -1,4 +1,5 @@
 import { User } from './model';
+import { UserType } from './types/user';
 import jwt from 'jsonwebtoken';
 
 const myAccessToken = "owls-can-make-secret-sauce";
@@ -20,12 +21,12 @@ const login = async ({email, password}: {email: string, password: string}) => {
     const refresh_expiration_time = current_time + 604800; // 7 days
 
     const accessClaims = {
-        sub: user._id.toString(),
+        sub: user._id.toString(), // Use user ID in JWT claims
         exp: access_expiration_time,
     };
 
     const refreshClaims = {
-        sub: user._id.toString(),
+        sub: user._id.toString(), // Use user ID in JWT claims
         exp: refresh_expiration_time,
     };
 
@@ -58,7 +59,7 @@ const refresh = async (refreshToken: string) => {
                 const expiration_time = current_time + 900; // 15 minutes
                 const private_key = myAccessToken; // Use the access token as the private key
                 const claims = {
-                    sub: user._id.toString(),
+                    sub: user._id.toString(), // Use user ID in JWT claims
                     exp: expiration_time,
                 };
 
@@ -89,7 +90,16 @@ const register = async ({ email, username, password, role }: { email: string, us
         const newUser = new User({ username, email, role, password });
         await newUser.save();
 
-        return newUser;
+        // Convert newUser to UserType
+        const user: UserType = {
+            _id: newUser._id.toString(),
+            email: newUser.email,
+            username: newUser.username,
+            password: newUser.password,
+            role: newUser.role,
+        };
+
+        return user; // Return as UserType
     } catch (err) {
         throw new Error('Registration failed: ' + (err instanceof Error ? err.message : String(err)));
     }
