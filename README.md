@@ -16,6 +16,8 @@ Follow these steps to start the server:
    DB_CONN_STRING = <your-database-connection-string>
    ACCESS_TOKEN_SECRET = <random-string>
    REFRESH_TOKEN_SECRET = <random-string>
+   ACCESS_TOKEN_DURATION = 900
+   REFRESH_TOKEN_DURATION = 604800
    ```
 
 3. **Start the Server**:

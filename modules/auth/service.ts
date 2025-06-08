@@ -5,7 +5,8 @@ import jwt from 'jsonwebtoken';
 
 const myAccessSecret = process.env.ACCESS_TOKEN_SECRET as string;
 const myRefreshSecret = process.env.REFRESH_TOKEN_SECRET as string;
-
+const myAccessTokenDuration = process.env.ACCESS_TOKEN_DURATION ? parseInt(process.env.ACCESS_TOKEN_DURATION) : 900; // 15 minutes
+const myRefreshTokenDuration = process.env.REFRESH_TOKEN_DURATION ? parseInt(process.env.REFRESH_TOKEN_DURATION) : 604800; // 7 days
 
 const login = async ({email, password}: {email: string, password: string}) => {
     const user = await findUserByEmail(email);
@@ -19,8 +20,8 @@ const login = async ({email, password}: {email: string, password: string}) => {
     }
 
     const current_time = Math.floor(Date.now() / 1000);
-    const access_expiration_time = current_time + 900; // 15 minutes
-    const refresh_expiration_time = current_time + 604800; // 7 days
+    const access_expiration_time = current_time + myAccessTokenDuration; 
+    const refresh_expiration_time = current_time + myRefreshTokenDuration; 
 
     const accessClaims = {
         sub: user._id.toString(), // Use user ID in JWT claims
@@ -58,8 +59,8 @@ const refresh = async (refreshToken: string) => {
 
                 // Generate new access token
                 const current_time = Math.floor(Date.now() / 1000);
-                const expiration_time = current_time + 900; // 15 minutes
-                const private_key = myAccessSecret; // Use the access token as the private key
+                const expiration_time = current_time + myAccessTokenDuration;
+                const private_key = myAccessSecret; 
                 const claims = {
                     sub: user._id.toString(), // Use user ID in JWT claims
                     exp: expiration_time,
