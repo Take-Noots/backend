@@ -3,6 +3,7 @@ import connectToDatabase from './shared/connection/dbserver';
 import cookieParser from 'cookie-parser';
 import authRouter from './modules/auth/routes';
 import spotifyRouter from './modules/spotify/routes';
+import postRouter from './modules/post/routes';
 import { authenticateJWT } from './shared/middleware/authenticateJWT';
 
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/spotify', spotifyRouter);
+app.use('/post', postRouter);
 
 // Unsecured route for testing
 app.get('/hello', (req, res) => {
