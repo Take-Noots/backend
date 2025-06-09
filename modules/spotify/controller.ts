@@ -1,12 +1,9 @@
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
 import querystring from 'querystring';
 import 'dotenv/config';
 
-const router = express.Router();
-
-// Environment variables
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
@@ -33,8 +30,8 @@ const generateCodeChallenge = (verifier: string): string => {
         .replace(/\//g, '_');
 };
 
-// Initiate authorization flow
-router.get('/login', (req: Request, res: Response) => {
+
+const Login = async (req: Request, res: Response) => {
     const state = crypto.randomBytes(16).toString('hex');
     const codeVerifier = generateCodeVerifier(128);
     const codeChallenge = generateCodeChallenge(codeVerifier);
@@ -53,10 +50,10 @@ router.get('/login', (req: Request, res: Response) => {
     });
 
     res.redirect(`https://accounts.spotify.com/authorize?${params}`);
-});
+}
 
-// Handle authorization callback
-router.get('/callback', async (req: Request, res: Response) => {
+
+const Callback = async (req: Request, res: Response) => {
     const { code, state, error } = req.query;
     
     if (error) {
@@ -90,16 +87,64 @@ router.get('/callback', async (req: Request, res: Response) => {
 
         const { access_token, refresh_token, expires_in } = response.data;
         
-        // Store tokens securely (implementation specific)
-        // Return tokens to client or handle as needed
+        // Set refresh token as cookie
+        res.cookie('spotify_refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        });
+        res.setHeader('x-spotify-token', access_token);
+        
         res.json({ access_token, refresh_token, expires_in });
         
     } catch (error) {
         res.status(500).json({ error: 'Token exchange failed' });
     }
-});
 
-router.get('/whoami', async (req: Request, res: Response) => {
+}
+
+
+const Refresh = async (req: Request, res: Response) => {
+  const refresh_token = req.cookies?.spotify_refresh_token;
+  
+  if (!refresh_token) {
+    res.status(400).json({ error: 'Refresh token not found' });
+    return;
+  }
+  
+  try {
+    const response = await axios.post('https://accounts.spotify.com/api/token', 
+      querystring.stringify({
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token as string,
+        client_id: CLIENT_ID
+      }), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+    const { access_token, refresh_token: new_refresh_token } = response.data;
+    
+    // Update cookie with new refresh token if provided
+    if (new_refresh_token) {
+      res.cookie('spotify_refresh_token', new_refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+    }
+    
+    res.setHeader('x-spotify-token', access_token);
+    res.json({ message: 'Refresh was successful' });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Token refresh failed' });
+  }
+};
+
+
+const WhoAmI = async (req: Request, res: Response) => {
     const accessToken = req.headers['x-spotify-token'] as string;
     
     if (!accessToken) {
@@ -114,10 +159,10 @@ router.get('/whoami', async (req: Request, res: Response) => {
             }
         });
 
-        res.json(response.data);
+        res.json(response.data.display_name);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch user info' });
     }
-});
+}
 
-export default router;
+export { Login, Callback, Refresh, WhoAmI };

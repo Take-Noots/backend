@@ -2,7 +2,7 @@ import express from 'express';
 import connectToDatabase from './shared/connection/dbserver'; 
 import cookieParser from 'cookie-parser';
 import authRouter from './modules/auth/routes';
-import spotifyRouter from './spotify';
+import spotifyRouter from './modules/spotify/routes';
 import { authenticateJWT } from './shared/middleware/authenticateJWT';
 
 
