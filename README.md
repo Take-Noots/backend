@@ -11,15 +11,19 @@ Follow these steps to start the server:
    ```
 
 2. **Set Environment Variables**:
-   Ensure the `.env` file is properly configured with the required database connection string:
+   Set up the .env file with following:
    ```
    DB_CONN_STRING = <your-database-connection-string>
+   ACCESS_TOKEN_SECRET = <random-string>
+   REFRESH_TOKEN_SECRET = <random-string>
+   ACCESS_TOKEN_DURATION = 900
+   REFRESH_TOKEN_DURATION = 604800
    ```
 
 3. **Start the Server**:
    Use the following command to start the server:
    ```bash
-   npx ts-node server.ts
+   npm run dev
    ```
 
    The server will run on `http://localhost:3000`.
