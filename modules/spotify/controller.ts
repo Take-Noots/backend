@@ -38,7 +38,7 @@ const Login = async (req: Request, res: Response) => {
     
     codeVerifierStore.set(state, codeVerifier);
 
-    const scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email user-read-currently-playing';
     const params = querystring.stringify({
         response_type: 'code',
         client_id: CLIENT_ID,
@@ -160,9 +160,50 @@ const WhoAmI = async (req: Request, res: Response) => {
         });
 
         res.json(response.data.display_name);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch user info' });
+    } catch (error: any) {
+        console.error('Spotify API Error:', error);
+        const errorMessage = error.response?.data?.error?.message || error.message || 'Failed to fetch user info';
+        res.status(500).json({ error: errorMessage });
     }
 }
 
-export { Login, Callback, Refresh, WhoAmI };
+const GetCurrentTrack = async (req: Request, res: Response) => {
+    const accessToken = req.headers['x-spotify-token'] as string;
+    
+    if (!accessToken) {
+        res.status(401).json({ error: 'Spotify access token is required in X-Spotify-Token header' });
+        return;
+    }
+
+    try {
+        const response = await axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+
+        if (response.status === 204) {
+            // No track is currently playing
+            res.json({ is_playing: false });
+            return;
+        }
+
+        const track = response.data;
+        res.json({
+            is_playing: true,
+            track: {
+                name: track.item.name,
+                artists: track.item.artists.map((artist: any) => artist.name),
+                album: track.item.album.name,
+                duration_ms: track.item.duration_ms,
+                progress_ms: track.progress_ms,
+                is_playing: track.is_playing
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch current track' });
+    }
+}
+
+export { Login, Callback, Refresh, WhoAmI, GetCurrentTrack };
