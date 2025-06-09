@@ -4,7 +4,6 @@ import { Login, Callback, Refresh, WhoAmI, GetCurrentTrack } from "./controller"
 const router = Router();
 
 router.get('/login', Login);
-router.get('/callback', Callback);
 router.get('/refresh', Refresh);
 router.get('/whoami', WhoAmI);
 router.get('/current-track', GetCurrentTrack);
