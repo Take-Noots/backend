@@ -92,7 +92,52 @@ You will receive a list of tracks that matched your search request (limited to o
 ```
 
 
----
+## \[ GET ] Search Artists Famous Tracks
+
+This endpoint allows you to retrieve a list of most famous tracks of an artist
+
+### URL
+
+```
+localhost:3000/spotify/search-artists-famous-tracks
+```
+
+### Request
+
+Requires you to send a artist name as `artist_name` in body of request
+
+```
+{
+	"artist_name": "Pretty Patterns"
+}
+```
+
+Along with this you are also required to send `x-spotify-token` header containing spotify access token
+
+### Response
+
+Receive a list of tracks in body of response as follows
+
+```
+{
+	"tracks": [
+		{
+			"album": {
+			"album_type": "single",
+			"artists": [
+				{
+					"external_urls": {
+					"spotify": "https://open.spotify.com/artist/4qwvSfN4vvXmOfepMFSCeX"
+					},
+					"href": "https://api.spotify.com/v1/artists/4qwvSfN4vvXmOfepMFSCeX",
+					"id": "4qwvSfN4vvXmOfepMFSCeX",
+					"name": "Pretty Patterns",
+					"type": "artist",
+					"uri": "spotify:artist:4qwvSfN4vvXmOfepMFSCeX"
+				}
+			], .....
+```
+
 
 ---
 # Player
