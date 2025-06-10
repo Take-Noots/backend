@@ -67,7 +67,7 @@ const PlayTrack = async (req: Request, res: Response) => {
         res.json({ is_playing: true });
     } catch (error: any) {
         const errorMessage = error.response?.data?.error?.message || error.message || 'Failed to search tracks';
-        console.error(error.status, errorMessage);
+        // console.error(error.status, errorMessage);
         res.status(500).json({ error: errorMessage });
     }
 }

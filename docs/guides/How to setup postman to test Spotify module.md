@@ -62,3 +62,19 @@ I will use `localhost:3000/spotify/whoami` to elaborate how this will work. Its 
 - Value = `{{spotify_access_token}}`
 
 Step 2 : Make sure you have the correct environment selected in the environment drop down and Click Send. If all goes well you should see a response with a status "200" and your username as a string in response body
+
+## Common errors encountered
+
+### Only valid bearer authentication supported
+
+When you call requests such as whoami, you might occasional see 
+
+```
+{
+"error": "Only valid bearer authentication supported"
+}
+```
+
+with status code 500 and status message Internal Server Error.
+
+I found that this occasional occurs if you do not have the right environment selected or when you do not have a valid access token (If the latter is the case you can just run the refresh request again and get a valid token)
