@@ -2,7 +2,7 @@ import { Router } from "express";
 // import { Login, Callback, Refresh, WhoAmI, GetCurrentTrack, SearchTracks } from "./controller";
 import { Login, Callback, Refresh, WhoAmI } from "./controllers/authController";
 import { GetCurrentTrack, PlayTrack } from "./controllers/playerController";
-import { SearchTracks } from "./controllers/searchController";
+import { SearchArtistsFamousTracks, SearchTracks } from "./controllers/searchController";
 
 
 
@@ -15,6 +15,7 @@ router.get('/callback', Callback);
 router.get('/whoami', WhoAmI);
 
 router.get('/search', SearchTracks);
+router.get('/search-artists-famous-tracks', SearchArtistsFamousTracks);
 
 router.get('/current-track', GetCurrentTrack);
 router.put('/play', PlayTrack); 
