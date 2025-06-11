@@ -1,9 +1,9 @@
 import express from 'express';
 import connectToDatabase from './shared/connection/dbserver'; 
 import cookieParser from 'cookie-parser';
-import authRouter from './modules/auth/routes';
+import authRouter from './modules/users/routes';
 import spotifyRouter from './modules/spotify/routes';
-import postRouter from './modules/post/routes';
+import postRouter from './modules/content/routes';
 import { authenticateJWT } from './shared/middleware/authenticateJWT';
 
 

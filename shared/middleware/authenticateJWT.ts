@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, request } from 'express';
-import { validateToken } from '../../modules/auth/service'; // Fixed relative path
+import { validateToken } from '../../modules/users/auth/service'; // Fixed relative path
 
 export const authenticateJWT = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;

@@ -140,6 +140,8 @@ Receive a list of tracks in body of response as follows
 
 
 ---
+
+---
 # Player
 
 ## \[ GET ] Get Current Track
