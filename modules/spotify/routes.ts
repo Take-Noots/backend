@@ -18,6 +18,8 @@ router.get('/search', SearchTracks);
 router.get('/search-artists-famous-tracks', SearchArtistsFamousTracks);
 
 router.get('/current-track', GetCurrentTrack);
-router.put('/play', PlayTrack); 
+router.put('/play', PlayTrack);
+
+router.post('/search', SearchTracks);
 
 export default router;

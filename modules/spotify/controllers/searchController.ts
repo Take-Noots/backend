@@ -30,7 +30,7 @@ const SearchTracks = async (req: Request, res: Response) => {
                 id: item.id,
                 name: item.name,
                 artists: item.artists.map((artist: any) => artist.name),
-                album: item.album.name
+                album: item.album
                 }))
             }
         };
