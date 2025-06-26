@@ -1,3 +1,5 @@
+ctrl + shift + v
+
 This doc will go through the current process to test spotify module endpoints using postman. It is assumed that you have a workspace set up with an collection to store requests. It is also assumed that the back-end is up and running through out this process.
 
 ## Getting Started
@@ -14,9 +16,9 @@ This doc will go through the current process to test spotify module endpoints us
 
 Make sure to copy the string given in refresh_token
 
-**Step 2** : Create a new **GET HTTP request** (preferably named "Refresh") with the URL `localhost:3000/spotify/refresh` . 
+**Step 2** : Create a new **GET HTTP request** (preferably named "Refresh") with the URL `localhost:3000/spotify/refresh` .
 
-**Step 3** : Navigate to cookies menu (should be somewhere in top right with "cookies" written in blue). Add a new domain called `localhost:3000`. Once the domain localhost is created, create a new cookie by clicking "Add cookie"  
+**Step 3** : Navigate to cookies menu (should be somewhere in top right with "cookies" written in blue). Add a new domain called `localhost:3000`. Once the domain localhost is created, create a new cookie by clicking "Add cookie"
 
 **Step 4** : Currently you cookie creation thingie will look something like this
 
@@ -32,7 +34,7 @@ spotify_refresh_token=<yout-refresh-token>; Path=/; Expires=Tue, 09 Jun 2026 22:
 
 Once done save the cookie and exit the cookie menu
 
-**Step 5** :  In your top right you will see a environment tab (Will have a drop down with "no environment" or something). Click the drop down and click the "+" to create a new environment. Here add a new variable called "spotify_access_token" (you do not need to give it a Initial Value or Current Value at this moment). Make sure you have this New Environment in the Environment drop down each time you work.
+**Step 5** : In your top right you will see a environment tab (Will have a drop down with "no environment" or something). Click the drop down and click the "+" to create a new environment. Here add a new variable called "spotify_access_token" (you do not need to give it a Initial Value or Current Value at this moment). Make sure you have this New Environment in the Environment drop down each time you work.
 
 **Step 6** : In your Refresh Request, You will see a "Script" Tab (will be alongside Params, Authorization, Headers, Body tabs). Make sure to have the following code in the "Post-response" of Script tab
 
@@ -58,6 +60,7 @@ If all went alright, Now you have an access token (It's currently in your enviro
 I will use `localhost:3000/spotify/whoami` to elaborate how this will work. Its a simple endpoint used to get the username of the spotify user that's connected to Noot
 
 **Step 1** : Create a new **GET HTTP Request** (preferably named "Get Username") with the URL `localhost:3000/spotify/whoami` . In the "Headers" tab (Will be alongside Params, Authorization tabs), Create a new header by giving the following values to a row.
+
 - Key = `x-spotify-token`
 - Value = `{{spotify_access_token}}`
 
@@ -67,7 +70,7 @@ Step 2 : Make sure you have the correct environment selected in the environment 
 
 ### Only valid bearer authentication supported
 
-When you call requests such as whoami, you might occasional see 
+When you call requests such as whoami, you might occasional see
 
 ```
 {
