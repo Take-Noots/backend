@@ -4,8 +4,8 @@ import cookieParser from 'cookie-parser';
 import authRouter from './modules/auth/routes';
 import spotifyRouter from './modules/spotify/routes';
 import postRouter from './modules/post/routes';
+import chatRouter from './modules/chat/routes';
 import { authenticateJWT } from './shared/middleware/authenticateJWT';
-
 
 const app = express();
 const port = 3000;
@@ -17,6 +17,7 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/spotify', spotifyRouter);
 app.use('/post', postRouter);
+app.use('/chat', authenticateJWT, chatRouter);
 
 // Unsecured route for testing
 app.get('/hello', (req, res) => {
@@ -27,7 +28,6 @@ app.get('/hello', (req, res) => {
 app.get('/securehello', authenticateJWT, (req, res) => {
   res.json({ message: 'hello secure world' });
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
