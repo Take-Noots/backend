@@ -30,7 +30,7 @@ const SearchTracks = async (req: Request, res: Response) => {
                 id: item.id,
                 name: item.name,
                 artists: item.artists.map((artist: any) => artist.name),
-                album: item.album
+                album: item.album.images[0].url
                 }))
             }
         };
@@ -78,7 +78,7 @@ const SearchArtistsFamousTracks = async (req: Request, res: Response) => {
                 Authorization: `Bearer ${accessToken}`
             },
             params: {
-                market: 'US'  // Required parameter for top tracks
+                market: 'US'  
             }
         });
 
